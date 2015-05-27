@@ -2,9 +2,8 @@
 
 //TODO:
 
-// work on read and rebuild build
-// create winner var for game end
-// authenticate github pages with firebase
+//control which user can play
+//restore session if user leaves
 
 function makeGrid(){
 	
@@ -126,12 +125,18 @@ function gameLogic(divArr, tileArr){
 	}
 
  	myDataRef.on('child_changed', function(snapshot) { 
-
- 		var boardUpdate = snapshot.val();
- 		updateSquare(boardUpdate);
- 		//write function to extract divArr from snapshot and assign to local divArr
-
+ 		console.dir(snapshot.key())
+ 		if(snapshot.key() !="winner"){
+	 		var boardUpdate = snapshot.val();
+	 		updateSquare(boardUpdate);
+	 	}
+	 	
+ 		if(snapshot.key()=="winner" && snapshot.val() == true){
+ 			alert("winner")
+ 			endGame();
+		}
 	})
+
 
 	function updateSquare(boardUpdate){
 		var divID = boardUpdate.slice(0,1)
@@ -147,15 +152,17 @@ function gameLogic(divArr, tileArr){
 	 			$(tileArr[parseInt(divID)]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "90%").css("padding", "4.75%")
 	 			if(checkWin(divArr)){
-					alert("WINNER!")
-					endGame();
+					myDataRef.set({winner : true})
+					myDataRef.set({winner : false})
+					
 				}
 	 		} else {
 	 			$(tileArr[parseInt(divID)]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "78%").css("padding", "5.75%")
 	 			if(checkWin(divArr)){
-					alert("WINNER!")
-					endGame();
+					myDataRef.set({winner : true})
+					myDataRef.set({winner : false})
+					
 				}
 			}
 		// }
