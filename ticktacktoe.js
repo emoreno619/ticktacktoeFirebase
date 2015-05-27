@@ -91,15 +91,11 @@ function gameLogic(divArr, tileArr){
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "78%").css("padding", "2%")
 				clickedSquare.addClass("anX")
 				turnID = !turnID
-				if(checkWin(divArr))
-					console.log("WINNER!")
 			} else {
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "93%").css("padding", "2%")
 				clickedSquare.addClass("anO")
 				turnID = !turnID
-				if(checkWin(divArr))
-					console.log("WINNER!")
 			}
 			////////////////////////////////////
 			////////////////////////////////////
@@ -150,9 +146,17 @@ function gameLogic(divArr, tileArr){
 	 			// $(tileArr[parseInt(divID)]).html('BOOP')
 	 			$(tileArr[parseInt(divID)]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "90%").css("padding", "4.75%")
+	 			if(checkWin(divArr)){
+					alert("WINNER!")
+					endGame();
+				}
 	 		} else {
 	 			$(tileArr[parseInt(divID)]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "78%").css("padding", "5.75%")
+	 			if(checkWin(divArr)){
+					alert("WINNER!")
+					endGame();
+				}
 			}
 		// }
 	}
