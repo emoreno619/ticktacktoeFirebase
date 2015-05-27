@@ -41,11 +41,18 @@ function makeTileStyle(tileArr, divArr){
 
 }
 
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+// var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
+// myDataRef.push({divArr : divArr});
+var moveCounter = 0;
+
 
 function gameLogic(divArr, tileArr){
 
 	var turnID = 1
-	var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
 
 	$("#gridContainer").children().click(function(event){  
 		flip($(this));
@@ -70,7 +77,17 @@ function gameLogic(divArr, tileArr){
 				if(checkWin(divArr))
 					console.log("WINNER!")
 			}
-			myDataRef.push({divArr : divArr});
+			////////////////////////////////////
+			////////////////////////////////////
+			////////////////////////////////////
+			var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+			var aMove = "move";
+			aMove += moveCounter;
+			moveCounter += 1;
+
+			myDataRef.child(aMove).set($(divArr).attr('id') + " " + $(divArr).attr('class'))
+			// myDataRef.push({divArr : String(divArr)});
+			// myDataRef.push({divArr : JSON.stringify(divArr[0])});
 			// include data about whose turn it is, also write local logic to connect with that data
 		}
 	}
