@@ -69,6 +69,7 @@ function resetDB(){
 		bMove = "move" + j;
 		myDataRef.child(bMove).set("")
 	}
+	myDataRef.child("winner").set(false)
 }
 
 function gameLogic(divArr, tileArr){
@@ -109,8 +110,7 @@ function gameLogic(divArr, tileArr){
 			
 			//Reset game
 			if (moveCounter == 9) {
-				alert("Game over")
-				endGame();
+				myDataRef.set({winner : 0})
 			}
 		}
 	}
@@ -134,6 +134,9 @@ function gameLogic(divArr, tileArr){
  		if(snapshot.key()=="winner" && snapshot.val() == true){
  			alert("winner")
  			endGame();
+		} else if (snapshot.key()=="winner" && snapshot.val() == false) {
+			alert("tie")
+			endGame();
 		}
 	})
 
@@ -153,7 +156,7 @@ function gameLogic(divArr, tileArr){
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "90%").css("padding", "4.75%")
 	 			if(checkWin(divArr)){
 					myDataRef.set({winner : true})
-					myDataRef.set({winner : false})
+					// myDataRef.set({winner : false})
 					
 				}
 	 		} else {
@@ -161,7 +164,7 @@ function gameLogic(divArr, tileArr){
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "78%").css("padding", "5.75%")
 	 			if(checkWin(divArr)){
 					myDataRef.set({winner : true})
-					myDataRef.set({winner : false})
+					// myDataRef.set({winner : false})
 					
 				}
 			}
