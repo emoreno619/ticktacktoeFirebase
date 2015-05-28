@@ -55,6 +55,16 @@ function makeTileStyle(tileArr, divArr){
 var moveCounter = 0;
 var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
 
+myDataRef.authWithOAuthRedirect("github", function(error) {
+  if (error) {
+    console.log("Login Failed!", error);
+  } else {
+    // We'll never get here, as the page will redirect on success.
+  }
+});
+
+
+
 // myDataRef.authWithOAuthPopup("github", function(error, authData) {
 //   if (error) {
 //     console.log("Login Failed!", error);
