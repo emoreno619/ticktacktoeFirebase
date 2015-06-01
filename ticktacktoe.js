@@ -55,23 +55,6 @@ function makeTileStyle(tileArr, divArr){
 var moveCounter = 0;
 var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
 
-//GOOGLE AUTH
-
-
-
-
-//GITHUB AUTH
-
-// myDataRef.authWithOAuthRedirect("github", function(error) {
-//   if (error) {
-//     console.log("Login Failed!", error);
-//   } else {
-//     // We'll never get here, as the page will redirect on success.
-//   }
-// });
-
-
-
 // myDataRef.authWithOAuthPopup("github", function(error, authData) {
 //   if (error) {
 //     console.log("Login Failed!", error);
@@ -82,11 +65,11 @@ var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
 
 
 function resetDB(){
+	myDataRef.set({winner : 0})
 	for (var j = 0; j < 9; j++){
 		bMove = "move" + j;
 		myDataRef.child(bMove).set("")
 	}
-	myDataRef.child("winner").set(false)
 }
 
 function gameLogic(divArr, tileArr){
@@ -151,7 +134,8 @@ function gameLogic(divArr, tileArr){
  		if(snapshot.key()=="winner" && snapshot.val() == true){
  			alert("winner")
  			endGame();
-		} else if (snapshot.key()=="winner" && snapshot.val() == false) {
+		} else if (snapshot.key()=="winner" && snapshot.val() != 0) {
+			
 			alert("tie")
 			endGame();
 		}
