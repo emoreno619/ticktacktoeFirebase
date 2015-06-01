@@ -2,7 +2,7 @@
 
 //TODO:
 
-//control which user can play
+//control which user can play by storing turnID var in DB
 //restore session if user leaves
 
 function makeGrid(){
@@ -53,10 +53,6 @@ function makeTileStyle(tileArr, divArr){
 
 // myDataRef.push({divArr : divArr});
 var moveCounter = 0;
-var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
-
-//GOOGLE AUTH
-
 
 
 
@@ -87,13 +83,33 @@ function resetDB(){
 		myDataRef.child(bMove).set("")
 	}
 	myDataRef.child("winner").set(false)
+	myDataRef.child("users").set("[]")
 }
 
 function gameLogic(divArr, tileArr){
 
 	var turnID = 1
 	resetDB();
-	
+	var userName = ""
+	var player1 = false;
+	var player2 = false;
+	// userName.push(prompt("What's your name?"))
+	myDataRef.once('value', function(snapshot){
+		if (snapshot.val().user1 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user1 : userName})
+			player1 = true;
+		} else if (snapshot.val().user2 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user2 : userName})
+			player2 = true;
+		} else
+			prompt("Sorry, there are already two players.")
+
+		console.log(snapshot.val().users);
+	})
+
+	// myDataRef.update({users: userName})
 
 	$("#gridContainer").children().click(function(event){  
 		flip($(this));
@@ -101,9 +117,10 @@ function gameLogic(divArr, tileArr){
 	})
 
 	function flip(clickedSquare){
+		// if (userName != "" && turnID)
 		if(!clickedSquare.hasClass("flipped")){
 			clickedSquare.addClass("flipped")
-			if(!turnID){
+			if(player1){
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "78%").css("padding", "2%")
 				clickedSquare.addClass("anX")
@@ -223,6 +240,20 @@ function makeStyle(divArr){
 
 }
 
+var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
 $(function(){
 	makeGrid();
+
+
+
+	//GOOGLE AUTH
+
+	// myDataRef.authWithOAuthRedirect("google", function(error) {
+	//   if (error) {
+	//     console.log("Login Failed!", error);
+	//   } else {
+	//     // We'll never get here, as the page will redirect on success.
+	//   }
+	// });
 })
