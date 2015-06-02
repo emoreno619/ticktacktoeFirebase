@@ -125,22 +125,30 @@ function gameLogic(divArr, tileArr){
 	}
 
  	myDataRef.on('child_changed', function(snapshot) { 
+ 		
  		console.dir(snapshot.key())
+
  		if(snapshot.key() !="winner"){
 	 		var boardUpdate = snapshot.val();
 	 		updateSquare(boardUpdate);
-	 	}
-	 	
- 		if(snapshot.key()=="winner" && snapshot.val() == true){
+	 	} 
+
+	 	if(snapshot.key()=="winner" && snapshot.val() == true){
  			alert("winner")
  			endGame();
-		} else if (snapshot.key()=="winner" && snapshot.val() != 0) {
-			
+		} else if (snapshot.key() == "move8" && snapshot.val() != "") {
 			alert("tie")
 			endGame();
 		}
 	})
 
+ 	function checkForEighthMove(){
+ 		console.log('hi')
+ 		myDataRef.child("move8").once('value', function(snapshot) {
+			  var exists = (snapshot.val() == "");
+			  return exists;
+			});
+ 	}
 
 	function updateSquare(boardUpdate){
 		var divID = boardUpdate.slice(0,1)
@@ -156,7 +164,7 @@ function gameLogic(divArr, tileArr){
 	 			$(tileArr[parseInt(divID)]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "90%").css("padding", "4.75%")
 	 			if(checkWin(divArr)){
-					myDataRef.set({winner : true})
+					myDataRef.set({winner : 1})
 					// myDataRef.set({winner : false})
 					
 				}
@@ -164,7 +172,8 @@ function gameLogic(divArr, tileArr){
 	 			$(tileArr[parseInt(divID)]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 	 			$(tileArr[parseInt(divID)]).children().css("maxWidth", "78%").css("padding", "5.75%")
 	 			if(checkWin(divArr)){
-					myDataRef.set({winner : true})
+					myDataRef.set({winner : 1})
+
 					// myDataRef.set({winner : false})
 					
 				}
