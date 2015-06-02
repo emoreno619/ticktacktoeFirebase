@@ -133,21 +133,23 @@ function gameLogic(divArr, tileArr){
 	 		updateSquare(boardUpdate);
 	 	} 
 
-	 	if(snapshot.key()=="winner" && snapshot.val() == true){
- 			alert("winner")
- 			endGame();
-		} else if (snapshot.key() == "move8" && snapshot.val() != "") {
+	 	
+	 	if (snapshot.key() == "move8" && snapshot.val() != "" && checkForEighthMove()) {
 			alert("tie")
 			endGame();
+		} else if(snapshot.key()=="winner" && snapshot.val() === 1){
+ 			alert("winner")
+ 			endGame();
 		}
 	})
 
  	function checkForEighthMove(){
  		console.log('hi')
- 		myDataRef.child("move8").once('value', function(snapshot) {
-			  var exists = (snapshot.val() == "");
-			  return exists;
+ 		var exists = false;
+ 		myDataRef.child("move1").once('value', function(snapshot) {
+			  exists = (snapshot.val() != "");
 			});
+ 		 return exists;
  	}
 
 	function updateSquare(boardUpdate){
