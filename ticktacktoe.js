@@ -77,6 +77,32 @@ function gameLogic(divArr, tileArr){
 	var turnID = 1
 	resetDB();
 	
+	var userName = ""
+	var player1 = false;
+	var player2 = false;
+	// userName.push(prompt("What's your name?"))
+	myDataRef.once('value', function(snapshot){
+		if(!snapshot.val().user1)
+			myDataRef.child("user1").set("")
+
+		if(!snapshot.val().user2)
+			myDataRef.child("user2").set("")
+
+		if (snapshot.val().user1 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user1 : [userName, turnID]})
+			player1 = true;
+		} else if (snapshot.val().user2 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user2 : [userName, turnID]})
+			player2 = true;
+		} else
+			prompt("Sorry, there are already two players.")
+
+		myDataRef.update({turn : 1})
+		console.log(snapshot.val().users);
+	})
+
 
 	$("#gridContainer").children().click(function(event){  
 		flip($(this));
@@ -84,18 +110,28 @@ function gameLogic(divArr, tileArr){
 	})
 
 	function flip(clickedSquare){
+		myDataRef.once('value', function(snapshot){
+			console.log(snapshot.val().turn)
+		})
+
 		if(!clickedSquare.hasClass("flipped")){
 			clickedSquare.addClass("flipped")
 			if(!turnID){
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "78%").css("padding", "2%")
 				clickedSquare.addClass("anX")
-				turnID = !turnID
+				myDataRef.update({turn : !turnID})
+				myDataRef.once('value', function(snapshot){
+					turnID = snapshot.val().turn
+				})
 			} else {
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "93%").css("padding", "2%")
 				clickedSquare.addClass("anO")
-				turnID = !turnID
+				myDataRef.update({turn : !turnID})
+				myDataRef.once('value', function(snapshot){
+					turnID = snapshot.val().turn
+				})
 			}
 			////////////////////////////////////
 			////////////////////////////////////
@@ -126,7 +162,6 @@ function gameLogic(divArr, tileArr){
 
  	myDataRef.on('child_changed', function(snapshot) { 
  		
- 		console.dir(snapshot.key())
 
  		if(snapshot.key() !="winner"){
 	 		var boardUpdate = snapshot.val();
@@ -144,7 +179,6 @@ function gameLogic(divArr, tileArr){
 	})
 
  	function checkForEighthMove(){
- 		console.log('hi')
  		var exists = false;
  		myDataRef.child("move1").once('value', function(snapshot) {
 			  exists = (snapshot.val() != "");
