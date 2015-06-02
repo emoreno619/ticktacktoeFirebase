@@ -109,6 +109,12 @@ function gameLogic(divArr, tileArr){
 
 	})
 
+	function checkTurn(){
+		myDataRef.once('value', function(snapshot){
+					turnID = snapshot.val().turn
+				})
+	}
+
 	function flip(clickedSquare){
 		myDataRef.once('value', function(snapshot){
 			console.log(snapshot.val().turn)
@@ -116,6 +122,7 @@ function gameLogic(divArr, tileArr){
 
 		if(!clickedSquare.hasClass("flipped")){
 			clickedSquare.addClass("flipped")
+			checkTurn();
 			if(!turnID){
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "78%").css("padding", "2%")
@@ -128,7 +135,8 @@ function gameLogic(divArr, tileArr){
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
 				// $(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "93%").css("padding", "2%")
 				clickedSquare.addClass("anO")
-				myDataRef.update({turn : !turnID})
+				turnID = !turnID
+				myDataRef.update({turn : turnID})
 				myDataRef.once('value', function(snapshot){
 					turnID = snapshot.val().turn
 				})
@@ -141,9 +149,30 @@ function gameLogic(divArr, tileArr){
 			aMove += moveCounter;
 			if (moveCounter <= 8)
 				moveCounter += 1;
+			var flag = false
 
-			myDataRef.child(aMove).set(clickedSquare.attr('id') + " " + clickedSquare.attr('class'))
-			
+			// function moveOk(aMove) {
+
+			// 	var result = false
+
+			// 	result = myDataRef.once('value', function(snapshot){
+					
+			// 		if(snapshot.child(aMove).val() == "")
+			// 			return true
+					
+			// 	})
+
+			// 	return result;
+
+			// }
+
+			// while (!flag){
+			// 	if (moveOk(aMove)) {
+					myDataRef.child(aMove).set(clickedSquare.attr('id') + " " + clickedSquare.attr('class'))
+				// 	flag = !flag;
+				// }
+				aMove += 1;
+			// }
 			//Reset game
 			if (moveCounter == 9) {
 				myDataRef.set({winner : 0})
@@ -187,7 +216,16 @@ function gameLogic(divArr, tileArr){
  	}
 
 	function updateSquare(boardUpdate){
-		var divID = boardUpdate.slice(0,1)
+ 		var anArr = []
+
+ 		myDataRef.once('value', function(snapshot){
+					for (var i = 0; i < 9; i++){
+						anArr.push(snapshot.child("move" + i).val())
+						console.log(anArr)
+					}
+				})
+
+ 		var divID = boardUpdate.slice(0,1)
  		var flippedClass = boardUpdate.slice(2,9)
  		var symbolClass = boardUpdate.slice(10,13)
 
