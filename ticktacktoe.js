@@ -1,5 +1,13 @@
 // ticktacktoe.js
 
+
+
+//TODO:
+
+//control which user can play
+//restore session if user leaves
+
+
 function makeGrid(){
 	
 	var divArr = []
@@ -42,15 +50,87 @@ function makeTileStyle(tileArr, divArr){
 }
 
 
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+// var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
+// myDataRef.push({divArr : divArr});
+var moveCounter = 0;
+var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
+// myDataRef.authWithOAuthPopup("github", function(error, authData) {
+//   if (error) {
+//     console.log("Login Failed!", error);
+//   } else {
+//     console.log("Authenticated successfully with payload:", authData);
+//   }
+// });
+
+
+function resetDB(){
+	myDataRef.set({winner : 0})
+	for (var j = 0; j < 9; j++){
+		bMove = "move" + j;
+		myDataRef.child(bMove).set("")
+	}
+}
+
+
+
+
 function gameLogic(divArr, tileArr){
 
 	var turnID = 1
+
 	var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
+
+	resetDB();
+	
+	var userName = ""
+	var player1 = false;
+	var player2 = false;
+	// userName.push(prompt("What's your name?"))
+	myDataRef.once('value', function(snapshot){
+		if(!snapshot.val().user1)
+			myDataRef.child("user1").set("")
+
+		if(!snapshot.val().user2)
+			myDataRef.child("user2").set("")
+
+		if (snapshot.val().user1 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user1 : [userName, turnID]})
+			player1 = true;
+		} else if (snapshot.val().user2 == ""){
+			userName = prompt("What's your name?");
+			myDataRef.update({user2 : [userName, turnID]})
+			player2 = true;
+		} else
+			prompt("Sorry, there are already two players.")
+
+		myDataRef.update({turn : 1})
+		console.log(snapshot.val().users);
+	})
+
+
+
+	var myDataRef = new Firebase('https://resplendent-heat-9896.firebaseio.com/');
+
 
 	$("#gridContainer").children().click(function(event){  
 		flip($(this));
 
 	})
+
+
+	function checkTurn(){
+		myDataRef.once('value', function(snapshot){
+					turnID = snapshot.val().turn
+				})
+	}
+
 
 	function flip(clickedSquare){
 		if(!clickedSquare.hasClass("flipped")){
@@ -81,6 +161,37 @@ function gameLogic(divArr, tileArr){
  // 		//write function to extract divArr from snapshot and assign to local divArr
 
 	// })
+
+	function flip(clickedSquare){
+		if(!clickedSquare.hasClass("flipped")){
+			clickedSquare.addClass("flipped")
+			if(!turnID){
+				$(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="https://i0.wp.com/theaveragejess.com/wp-content/uploads/2012/02/redx-300x297.jpg" >')
+				$(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "78%").css("padding", "2%")
+				clickedSquare.addClass("anX")
+				turnID = !turnID
+				if(checkWin(divArr))
+					console.log("WINNER!")
+			} else {
+				$(tileArr[parseInt(clickedSquare.attr("id"))]).html('<img src="http://dailydropcap.com/images/O-7.jpg" >')
+				$(tileArr[parseInt(clickedSquare.attr("id"))]).children().css("maxWidth", "93%").css("padding", "2%")
+				clickedSquare.addClass("anO")
+				turnID = !turnID
+				if(checkWin(divArr))
+					console.log("WINNER!")
+			}
+			myDataRef.push({divArr : divArr});
+			// include data about whose turn it is, also write local logic to connect with that data
+		}
+	}
+
+ // 	myDataRef.on('child_added', function(snapshot) { 
+
+ // 		var boardUpdate = snapshot.val();
+ // 		//write function to extract divArr from snapshot and assign to local divArr
+
+	// })
+
 
 	function checkWin(divArr){
 		var possibleWinners = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
